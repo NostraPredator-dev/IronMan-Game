@@ -12,6 +12,7 @@ var score = 0; //Score of how many diamonds collected
 var spkGrp; //Group to store all the Spikes
 var spike //Spike
 var spkImg; //Store Image of the Spike
+var state = "play" //State of the game playing or ended
 
 function preload() {
   backgroundImg = loadImage("images/bg.jpg");
@@ -38,82 +39,104 @@ function draw() {
   iron.bounceOff(edges[1]);
   iron.bounceOff(edges[2]);
   iron.bounceOff(edges[3]);*/
-  if (keyDown("w")) //Movement of IronMan
+  if (state == "play")
   {
-    iron.y = iron.y - 4;
-  }
-  else
-  {
-    iron.y = iron.y + 2;
-  }
-  if (keyDown("s")) //Movement of IronMan
-  {
-    iron.y = iron.y + 4;
-  }
-  if (keyDown("a")) //Movement ofIronMan
-  {
-    iron.x = iron.x - 8;
-  }
-  if (keyDown("d")) //Movement ofIronMan
-  {
-    iron.x = iron.x + 8;
-  }
-  if (iron.x < 12) //Bringing IronMan in range
-  {
-    iron.x = 12;
-  }
-  if (iron.x > 1170) //Bringing IronMan in range
-  {
-    iron.x = 1170;
-  }
-  if (iron.y < 50) //Bringing IronMan in range
-  {
-    iron.y = 50;
-  }
-  if (iron.y > 580) //Bringing IronMan in range
-  {
-    iron.y = 580;
-  }
-  bg.velocityY = 4;
-  if (bg.y > 363) //Looping Background
-  {
-    bg.y = bg.height/3;
-  }
-  generateStones(); //Method Call of generating Stone
-  for (var i = 0; i < stoneGrp.length;i++) //Colliding IronMan with stones
-  {
-    var temp = stoneGrp.get(i);
-    if(temp.isTouching(iron))
+    if (keyDown("w")) //Movement of IronMan
     {
-      iron.collide(temp);
+      iron.y = iron.y - 4;
     }
     else
     {
-      iron.velocityY = 0;
+      iron.y = iron.y + 2;
     }
-  }
-  generateDiamonds(); //Method Call of generating Diamonds
-  for (var i = 0; i < diamondGrp.length;i++) //Increasing score as IronMan touches Diamond
-  {
-    var temp = diamondGrp.get(i);
-    if(temp.isTouching(iron))
+    if (keyDown("s")) //Movement of IronMan
     {
-      score++; //Increament of score
-      temp.destroy(); //Removing diamond after collected
+      iron.y = iron.y + 4;
     }
-  }
-  generateSpikes(); //Method call of generating Spikes
-  for (var i = 0; i < spkGrp.length;i++) //Decreasing score as IronMan touches Spike
-  {
-    var temp = spkGrp.get(i);
-    if (temp.isTouching(iron))
+    if (keyDown("a")) //Movement ofIronMan
     {
-      score = score - 5; //Decreament of score
-      temp.destroy(); //Removing spike after touched
+      iron.x = iron.x - 8;
+    }
+    if (keyDown("d")) //Movement ofIronMan
+    {
+      iron.x = iron.x + 8;
+    }
+    if (iron.x < 12) //Bringing IronMan in range
+    {
+      iron.x = 12;
+    }
+    if (iron.x > 1170) //Bringing IronMan in range
+    {
+      iron.x = 1170;
+    }
+    if (iron.y < 50) //Bringing IronMan in range
+    {
+      iron.y = 50;
+    }
+    if (iron.y > 610) //Changing state if gone out of range
+    {
+      state = "end";
+    }
+    bg.velocityY = 4;
+    if (bg.y > 363) //Looping Background
+    {
+      bg.y = bg.height/3;
+    }
+    generateStones(); //Method Call of generating Stone
+    for (var i = 0; i < stoneGrp.length;i++) //Colliding IronMan with stones
+    {
+      var temp = stoneGrp.get(i);
+      if(temp.isTouching(iron))
+      {
+        iron.collide(temp);
+      }
+      else
+      {
+        iron.velocityY = 0;
+      }
+    }
+    generateDiamonds(); //Method Call of generating Diamonds
+    for (var i = 0; i < diamondGrp.length;i++) //Increasing score as IronMan touches Diamond
+    {
+      var temp = diamondGrp.get(i);
+      if(temp.isTouching(iron))
+      {
+        score++; //Increament of score
+        temp.destroy(); //Removing diamond after collected
+      }
+    }
+    generateSpikes(); //Method call of generating Spikes
+    for (var i = 0; i < spkGrp.length;i++) //Decreasing score as IronMan touches Spike
+    {
+      var temp = spkGrp.get(i);
+      if (temp.isTouching(iron))
+      {
+        if (score <= -10) //Changing state if score is too low
+        {
+          state = "end";
+        }
+        else
+        {
+          score = score - 5; //Decreament of score
+          temp.destroy(); //Removing spike after touched
+        }
+      }
     }
   }
-  textSize(25);
+  else if (state == "end")
+  {
+    bg.velocityY = 0;
+    iron.velocityY = 0;
+    iron.velocityX = 0;
+    stoneGrp.setLifetimeEach(-1);
+    diamondGrp.setLifetimeEach(-1);
+    spkGrp.setLifetimeEach(-1);
+    stoneGrp.setVelocityYEach(0);
+    diamondGrp.setVelocityYEach(0);
+    spkGrp.setVelocityYEach(0);
+  }
   drawSprites();
+  textSize(25);
   fill("orange")
   text("Score = " + score,1050,50) //Displaying Score 
 }
