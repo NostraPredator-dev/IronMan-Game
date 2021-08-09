@@ -5,23 +5,27 @@ var stoneGrp;
 var diamond, diamondImg;
 var diamondGrp;
 var score = 0;
+var spkGrp;
+var spike, spkImg;
 
 function preload() {
   backgroundImg = loadImage("images/bg.jpg");
   ironImg = loadImage("images/iron.png");
   stoneImg = loadImage("images/stone.png");
   diamondImg = loadImage("images/diamond.png");
+  spkImg = loadImage("images/spikes.png");
 }
 
 function setup() {
-  createCanvas(1200, 600);
-  bg = createSprite(580, 300);
+  createCanvas(1270, 630);
+  bg = createSprite(641, 310);
   bg.addImage(backgroundImg);
   iron = createSprite(400,550,30,30)
   iron.addImage(ironImg);
   iron.scale = 0.2;
   stoneGrp = new Group();
   diamondGrp = new Group();
+  spkGrp = new Group();
 }
 
 function draw() {
@@ -43,11 +47,11 @@ function draw() {
   }
   if (keyDown("a"))
   {
-    iron.x = iron.x - 4;
+    iron.x = iron.x - 8;
   }
   if (keyDown("d"))
   {
-    iron.x = iron.x + 4;
+    iron.x = iron.x + 8;
   }
   if (iron.x < 12)
   {
@@ -93,6 +97,16 @@ function draw() {
       temp.destroy();
     }
   }
+  generateSpikes();
+  for (var i = 0; i < spkGrp.length;i++)
+  {
+    var temp = spkGrp.get(i);
+    if (temp.isTouching(iron))
+    {
+      score = score - 5;
+      temp.destroy();
+    }
+  }
   textSize(25);
   drawSprites();
   fill("orange")
@@ -101,10 +115,11 @@ function draw() {
 
 function generateStones()
 {
-  if (frameCount % 50 == 0)
+  if (frameCount % 45 == 0)
   {
-    stone = createSprite(random(0,1300),0,20,20);
+    stone = createSprite(random(0,1300),0,random(100,200),20);
     stone.addImage(stoneImg);
+    stone.scale = 1.2;
     stone.velocityY = 5;
     stone.lifetime = 150;
     stoneGrp.add(stone);
@@ -113,13 +128,26 @@ function generateStones()
 
 function generateDiamonds()
 {
-  if (frameCount % 40 == 0)
+  if (frameCount % 60 == 0)
   {
-    diamond = createSprite(random(0,1300),0,5,5);
+    diamond = createSprite(random(50,1250),0,5,5);
     diamond.addImage(diamondImg);
-    diamond.scale = 0.5;
+    diamond.scale = 0.7;
     diamond.velocityY = 5;
     diamond.lifetime = 150;
-    diamondGrp.add(diamond)
+    diamondGrp.add(diamond);
+  }
+}
+
+function generateSpikes()
+{
+  if (frameCount % 100 == 0)
+  {
+    spike = createSprite(random(0,1300),0,2,2);
+    spike.addImage(spkImg);
+    spike.scale = 0.4;
+    spike.velocityY = 5;
+    spike.lifetime = 150;
+    spkGrp.add(spike);
   }
 }
