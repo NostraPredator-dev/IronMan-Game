@@ -2,11 +2,15 @@ var bg, backgroundImg;
 var iron, ironImg;
 var stone, stoneImg;
 var stoneGrp;
+var diamond, diamondImg;
+var diamondGrp;
+var score = 0;
 
 function preload() {
   backgroundImg = loadImage("images/bg.jpg");
   ironImg = loadImage("images/iron.png");
   stoneImg = loadImage("images/stone.png");
+  diamondImg = loadImage("images/diamond.png");
 }
 
 function setup() {
@@ -17,6 +21,7 @@ function setup() {
   iron.addImage(ironImg);
   iron.scale = 0.2;
   stoneGrp = new Group();
+  diamondGrp = new Group();
 }
 
 function draw() {
@@ -73,6 +78,10 @@ function draw() {
     if(temp.isTouching(iron))
     {
       iron.collide(temp);
+    }
+    else
+    {
+      iron.velocityY = 0;
     }
   }
   drawSprites(); 
