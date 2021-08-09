@@ -12,7 +12,9 @@ var score = 0; //Score of how many diamonds collected
 var spkGrp; //Group to store all the Spikes
 var spike //Spike
 var spkImg; //Store Image of the Spike
-var state = "play" //State of the game playing or ended
+var state = "play"; //State of the game playing or ended
+var restart; //Restart Button
+var restartImg; //Restart button Image
 
 function preload() {
   backgroundImg = loadImage("images/bg.jpg");
@@ -20,6 +22,7 @@ function preload() {
   stoneImg = loadImage("images/stone.png");
   diamondImg = loadImage("images/diamond.png");
   spkImg = loadImage("images/spikes.png");
+  restartImg = loadImage("images/restart.png");
 }
 
 function setup() {
@@ -32,6 +35,9 @@ function setup() {
   stoneGrp = new Group();
   diamondGrp = new Group();
   spkGrp = new Group();
+  restart = createSprite(635, 315, 50, 20); //Creating Restart Image
+  restart.addImage(restartImg);
+  restart.visible = false;
 }
 
 function draw() {
@@ -111,7 +117,11 @@ function draw() {
       var temp = spkGrp.get(i);
       if (temp.isTouching(iron))
       {
-        if (score <= -10) //Changing state if score is too low
+        if (score == -10) //Changing state if score is too low
+        {
+          state = "end";
+        }
+        else if (score < -10) //Changing state if score is too low
         {
           state = "end";
         }
@@ -122,9 +132,18 @@ function draw() {
         }
       }
     }
+    if (score == -10) //Changing state if score is too low
+    {
+      state = "end";
+    }
+    else if (score < -10) //Changing state if score is too low
+    {
+      state = "end";
+    }
   }
   else if (state == "end")
   {
+    restart.visible = true;
     bg.velocityY = 0;
     iron.velocityY = 0;
     iron.velocityX = 0;
@@ -134,6 +153,10 @@ function draw() {
     stoneGrp.setVelocityYEach(0);
     diamondGrp.setVelocityYEach(0);
     spkGrp.setVelocityYEach(0);
+  }
+  if (mousePressedOver(restart))
+  {
+    startover();
   }
   drawSprites();
   textSize(25);
@@ -178,4 +201,16 @@ function generateSpikes() //Function to generate Spike
     spike.lifetime = 150;
     spkGrp.add(spike); //Adding generated spike to the group
   }
+}
+
+function startover()
+{
+  stoneGrp.destroyEach();
+  diamondGrp.destroyEach();
+  spkGrp.destroyEach();
+  score = 0;
+  iron.x = 400;
+  iron.y = 550;
+  restart.visible = false;
+  state = "play";
 }
