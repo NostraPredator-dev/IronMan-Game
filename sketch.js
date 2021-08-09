@@ -29,7 +29,6 @@ function draw() {
   iron.bounceOff(edges[1]);
   iron.bounceOff(edges[2]);
   iron.bounceOff(edges[3]);*/
-  iron.debug = true;
   if (keyDown("w"))
   {
     iron.y = iron.y - 4;
@@ -84,7 +83,20 @@ function draw() {
       iron.velocityY = 0;
     }
   }
-  drawSprites(); 
+  generateDiamonds();
+  for (var i = 0; i < diamondGrp.length;i++)
+  {
+    var temp = diamondGrp.get(i);
+    if(temp.isTouching(iron))
+    {
+      score++;
+      temp.destroy();
+    }
+  }
+  textSize(25);
+  drawSprites();
+  fill("orange")
+  text("Score = " + score,1050,50) 
 }
 
 function generateStones()
@@ -96,6 +108,18 @@ function generateStones()
     stone.velocityY = 5;
     stone.lifetime = 150;
     stoneGrp.add(stone);
-    stone.debug = true;
+  }
+}
+
+function generateDiamonds()
+{
+  if (frameCount % 40 == 0)
+  {
+    diamond = createSprite(random(0,1300),0,5,5);
+    diamond.addImage(diamondImg);
+    diamond.scale = 0.5;
+    diamond.velocityY = 5;
+    diamond.lifetime = 150;
+    diamondGrp.add(diamond)
   }
 }
